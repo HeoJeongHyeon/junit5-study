@@ -38,8 +38,8 @@ public class PostControllerTest {
                         .content(new ObjectMapper().writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.title").value("테스트 제목"))
-                .andExpect(jsonPath("$.content").value("테스트 내용"))
+                .andExpect(jsonPath("$.title").value("post Controller Test"))
+                .andExpect(jsonPath("$.content").value("testController"))
                 .andDo(print());
     }
 }
