@@ -1,4 +1,4 @@
-package heo.junit5study;
+package heo.junit5study.calculator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

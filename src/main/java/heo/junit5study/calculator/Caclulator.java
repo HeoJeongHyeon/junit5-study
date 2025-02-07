@@ -1,4 +1,4 @@
-package heo.junit5study;
+package heo.junit5study.calculator;
 
 public class Caclulator {
 

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.2'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
 }
 
 group = 'heo'
@@ -26,12 +27,57 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    jvmArgs "-Xshare:off"
+    finalizedBy jacocoTestReport  // 테스트 후 JaCoCo 리포트 생성
+
+}
+
+jacoco {
+    toolVersion = "0.8.9"  // JaCoCo 버전 지정
+}
+
+jacocoTestReport {
+    dependsOn test  // 테스트 실행 후 리포트 생성
+    reports {
+        xml.required = true  // Sonarqube 등과 연동을 위한 XML 리포트
+        csv.required = false
+        html.required = true
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
+
+// 테스트 커버리지 검증 규칙 설정
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.70  // 라인 커버리지 70% 이상 요구
+            }
+            excludes = [
+                    'com.example.demo.DemoApplication'  // 메인 애플리케이션 클래스 제외
+            ]
+        }
+    }
+}
+
+// test 태스크 실행 시 커버리지 검증도 실행
+tasks.named('check') {
+    dependsOn jacocoTestCoverageVerification
+
 }
